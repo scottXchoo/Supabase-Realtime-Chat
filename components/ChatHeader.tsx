@@ -28,7 +28,7 @@ export default function ChatHeader({ user }: { user: User | null }) {
 
   return (
     <div className="h-20">
-      <div className="flex items-center justify-between p-5 border-b">
+      <div className="flex items-center justify-between p-5 border-b h-full">
         <div>
           <h1 className="text-xl font-bold">Daily Chat</h1>
           <div className="flex items-center gap-1">
