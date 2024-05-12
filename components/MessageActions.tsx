@@ -26,9 +26,8 @@ import {
 import { Input } from "@/components/ui/input";
 
 export function DeleteAlert() {
-  const actionMessage = useMessage((state) => state.actionMessage);
-  const optimisticDeleteMessage = useMessage(
-    (state) => state.optimisticDeleteMessage
+  const { actionMessage, setOptimisticDeleteMessage } = useMessage(
+    (state) => state
   );
 
   const handleDeleteMessage = async () => {
@@ -38,7 +37,7 @@ export function DeleteAlert() {
       .delete()
       .eq("id", actionMessage?.id!);
 
-    optimisticDeleteMessage(actionMessage?.id!);
+    setOptimisticDeleteMessage(actionMessage?.id!);
 
     if (error) {
       toast.error(error.message);
@@ -73,9 +72,8 @@ export function DeleteAlert() {
 
 export function EditAlert() {
   const inputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
-  const actionMessage = useMessage((state) => state.actionMessage);
-  const optimisticUpdateMessage = useMessage(
-    (state) => state.optimisticUpdateMessage
+  const { actionMessage, setOptimisticUpdateMessage } = useMessage(
+    (state) => state
   );
 
   const handleEditMessage = async () => {
@@ -83,7 +81,7 @@ export function EditAlert() {
     const text = inputRef.current.value.trim();
 
     if (text) {
-      optimisticUpdateMessage({
+      setOptimisticUpdateMessage({
         ...actionMessage,
         text,
         is_edit: true,
