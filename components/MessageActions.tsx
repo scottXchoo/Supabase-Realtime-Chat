@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,9 +10,20 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useMessage } from "@/lib/store/messages";
+import { Imessage, useMessage } from "@/lib/store/messages";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 export function DeleteAlert() {
   const actionMessage = useMessage((state) => state.actionMessage);
@@ -57,5 +68,63 @@ export function DeleteAlert() {
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+export function EditAlert() {
+  const inputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
+  const actionMessage = useMessage((state) => state.actionMessage);
+  const optimisticUpdateMessage = useMessage(
+    (state) => state.optimisticUpdateMessage
+  );
+
+  const handleEditMessage = async () => {
+    const supabase = supabaseBrowser();
+    const text = inputRef.current.value.trim();
+
+    if (text) {
+      optimisticUpdateMessage({
+        ...actionMessage,
+        text,
+        is_edit: true,
+      } as Imessage);
+
+      const { error } = await supabase
+        .from("messages")
+        .update({
+          text,
+          is_edit: true,
+        })
+        .eq("id", actionMessage?.id!);
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success("Message updated successfully!");
+      }
+      document.getElementById("trigger-edit")?.click(); // close Alert 창
+    } else {
+      document.getElementById("trigger-edit")?.click(); // close Alert 창
+      document.getElementById("trigger-delete")?.click(); // 빈 문자열이면, 삭제 창 open
+    }
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button id="trigger-edit"></button>
+      </DialogTrigger>
+      <DialogContent className="w-full">
+        <DialogHeader>
+          <DialogTitle>Edit Message</DialogTitle>
+        </DialogHeader>
+        <Input defaultValue={actionMessage?.text} ref={inputRef} />
+        <DialogFooter>
+          <Button type="submit" onClick={handleEditMessage}>
+            Save changes
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
