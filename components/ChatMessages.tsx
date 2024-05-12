@@ -5,7 +5,6 @@ import InitMessages from "@/lib/store/InitMessages";
 
 export default async function ChatMessages() {
   const supabase = supabaseServer();
-
   const { data } = await supabase.from("messages").select("*, users(*)");
 
   return (

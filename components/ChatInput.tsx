@@ -4,10 +4,33 @@ import React from "react";
 import { Input } from "./ui/input";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
+import { useUser } from "@/lib/store/user";
+import { Imessage, useMessage } from "@/lib/store/messages";
 
 export default function ChatInput() {
+  const user = useUser((state) => state.user);
+  const addMessage = useMessage((state) => state.addMessage);
+
   const supabase = supabaseBrowser();
   const handleSendMessage = async (text: string) => {
+    if (text === "") toast.error("Message can't be empty!");
+
+    const newMessage: Imessage = {
+      created_at: new Date().toISOString(),
+      id: uuidv4(),
+      is_edit: false,
+      send_by: user?.id!,
+      text,
+      users: {
+        avatar_url: user?.user_metadata.avatar_url,
+        created_at: new Date().toISOString(),
+        display_name: user?.user_metadata.user_name,
+        id: user?.id!,
+      },
+    };
+    addMessage(newMessage);
+
     const { error } = await supabase.from("messages").insert({ text });
     if (error) {
       toast.error(error.message);
