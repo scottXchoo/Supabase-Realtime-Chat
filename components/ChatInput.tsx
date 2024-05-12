@@ -10,11 +10,13 @@ import { Imessage, useMessage } from "@/lib/store/messages";
 
 export default function ChatInput() {
   const user = useUser((state) => state.user);
-  const addMessage = useMessage((state) => state.addMessage);
+  const optimisticAddMessage = useMessage(
+    (state) => state.optimisticAddMessage
+  );
 
   const supabase = supabaseBrowser();
   const handleSendMessage = async (text: string) => {
-    if (text === "") toast.error("Message can't be empty!");
+    if (text === "") return toast.error("Message can't be empty!");
 
     const newMessage: Imessage = {
       created_at: new Date().toISOString(),
@@ -29,7 +31,8 @@ export default function ChatInput() {
         id: user?.id!,
       },
     };
-    addMessage(newMessage);
+
+    optimisticAddMessage(newMessage);
 
     const { error } = await supabase.from("messages").insert({ text });
     if (error) {
