@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import ListMessage from "./ListMessage";
+import ListMessage from "./ListMessages";
 import { supabaseServer } from "@/lib/supabase/server";
 import InitMessages from "@/lib/store/InitMessages";
 
