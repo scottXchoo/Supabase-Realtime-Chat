@@ -31,13 +31,13 @@ export function DeleteAlert() {
   );
 
   const handleDeleteMessage = async () => {
+    setOptimisticDeleteMessage(actionMessage?.id!);
+
     const supabase = supabaseBrowser();
     const { error } = await supabase
       .from("messages")
       .delete()
       .eq("id", actionMessage?.id!);
-
-    setOptimisticDeleteMessage(actionMessage?.id!);
 
     if (error) {
       toast.error(error.message);
