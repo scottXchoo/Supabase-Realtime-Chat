@@ -6,6 +6,7 @@ import { DeleteAlert, EditAlert } from "./MessageActions";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { ArrowDown } from "lucide-react";
+import LoadMoreMessages from "./LoadMoreMessages";
 
 export default function ListMessages() {
   const scrollRef = useRef() as React.MutableRefObject<HTMLDivElement>;
@@ -46,6 +47,7 @@ export default function ListMessages() {
               setOptimisticAddMessage(newMessage);
             }
           }
+
           if (
             scrollContainer.scrollTop <
             scrollContainer.scrollHeight - scrollContainer.clientHeight - 10
@@ -107,11 +109,14 @@ export default function ListMessages() {
   return (
     <>
       <div
-        className="flex-1 flex flex-col p-5 h-full overflow-y-auto"
+        className="flex-1 flex flex-col p-5 h-full overflow-y-auto gap-6"
         ref={scrollRef}
         onScroll={handleOnScoll}
       >
-        <div className="flex-1"></div> {/* chat을 아래에 위치시킴 */}
+        <div className="flex-1">
+          <LoadMoreMessages />
+        </div>
+        {/* chat을 아래에 위치시킴 */}
         <div className="space-y-7">
           {messages.map((data) => {
             return <Message key={data.id} message={data} />;
