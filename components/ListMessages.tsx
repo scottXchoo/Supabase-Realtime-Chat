@@ -113,7 +113,7 @@ export default function ListMessages() {
         ref={scrollRef}
         onScroll={handleOnScoll}
       >
-        <div className="flex-1">
+        <div className="flex-1 pb-5">
           <LoadMoreMessages />
         </div>
         {/* chat을 아래에 위치시킴 */}
